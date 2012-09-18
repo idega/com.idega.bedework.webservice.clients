@@ -1,0 +1,131 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>com.idega.bedework.webservice.clients</artifactId>
+	<name>Bedework clients for webservices integration</name>
+	<description>Webservices clients configuration for Bedework calendaring system.</description>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven2-repository.dev.java.net</id>
+			<url>http://download.java.net/maven/2/</url>
+		</pluginRepository>
+	</pluginRepositories>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>jaxws-maven-plugin</artifactId>
+										<versionRange>[1.0.0,)</versionRange>
+										<goals>
+											<goal>wsimport</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore />
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<!-- Generate client sources from *.wsdl files -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>Webservice</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>wsimport</goal>
+						</goals>
+						<inherited>false</inherited>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Packaging generated resources from *.wsdl to *.jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>package-wsclient-jars</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<classesDirectory>target/jaxws/wsimport/java</classesDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>${basedir}/src/calws-soap</directory>
+				<targetPath>calws-soap</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/calws-soap-strict</directory>
+				<targetPath>calws-soap-strict</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/synchws</directory>
+				<targetPath>synchws</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/exchangews</directory>
+				<targetPath>exchangews</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/schemas</directory>
+				<targetPath>schemas</targetPath>
+			</resource>
+			<resource>
+				<directory>${basedir}/src/wsdl</directory>
+				<targetPath>wsdl</targetPath>
+			</resource>
+			<resource> 
+				<directory>${basedir}/src/main/webapp</directory>
+			</resource>
+		</resources>
+	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-tools</artifactId>
+			<version>2.2.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.idega.block.platform</groupId>
+			<artifactId>com.idega.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jasig.bedework</groupId>
+			<artifactId>bw-caldavschema</artifactId>
+			<version>3.8</version>
+		</dependency>
+	</dependencies>
+	<parent>
+		<groupId>com.idega.block.addon</groupId>
+		<artifactId>com.idega.bedework.parent</artifactId>
+		<version>4.1.3-SNAPSHOT</version>
+	</parent>
+</project>

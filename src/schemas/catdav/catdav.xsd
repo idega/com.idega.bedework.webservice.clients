@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        xmlns:tns="http://www.bedework.org/schemas/catdav-1.0" 
+        xmlns:cat="http://www.bedework.org/schemas/category-1.0" 
+        targetNamespace="http://www.bedework.org/schemas/catdav-1.0" 
+        elementFormDefault="qualified">
+  <!-- =============================================================
+       CatDAV XML schema 
+       
+       Note: this schema is incomplete. It currently only defines 
+       elements required for CalWS.
+       ============================================================= -->
+        
+  <import schemaLocation="../category/category.xsd" 
+          namespace="http://www.bedework.org/schemas/category-1.0" />
+        
+  <simpleType name="YesNoType">
+    <annotation>
+      <documentation xml:lang="en">
+        The CatDAV spec has a yes/no option rather than boolean.
+      </documentation>
+    </annotation>
+    <restriction base="string">
+      <pattern value="yes|no"/>
+    </restriction>
+  </simpleType>
+        
+  <complexType name="AllpropType">
+    <annotation>
+      <documentation xml:lang="en">
+        The CALDAV:allprop XML element can be used when the
+        client wants all properties of components returned by a
+        calendaring REPORT request.
+      </documentation>
+    </annotation>
+  </complexType>
+  
+  <element name="allprop" type="tns:AllpropType" />
+  
+  <complexType name="PropType">
+    <annotation>
+      <documentation xml:lang="en">
+        The "name" attribute specifies the name of the calendar
+        property to return (e.g., ATTENDEE).  The "novalue" attribute can
+        be used by clients to request that the actual value of the
+        property not be returned (if the "novalue" attribute is set to
+        "yes").  In that case, the server will return just the iCalendar
+        property name and any iCalendar parameters and a trailing ":"
+        without the subsequent value data.
+      </documentation>
+    </annotation>
+    <attribute name="name" type="string" use="required" />
+    <attribute name="novalue" type="tns:YesNoType" default="no" />
+  </complexType>
+  
+  <element name="prop" type="tns:PropType" />
+
+  <complexType name="CategoryDataType">
+    <annotation>
+      <documentation xml:lang="en">
+        When used in an address book REPORT request, the
+        CATDAV:category-data XML element specifies which parts of category
+        object resources need to be returned in the response.  If the
+        CATDAV:category-data XML element doesn't contain any CATDAV:prop
+        elements, category object resources will be returned in their
+        entirety.  Additionally a media type and version can be specified
+        to request that the server return the data in that format if
+        possible.
+  
+        Finally, when used in a category REPORT response, the
+        CATDAV:category-data XML element specifies the content of a
+        category object resource. 
+
+        NOTE: This schema type only applies to category-data used in CatDAV
+        category-query requests.
+      </documentation>
+    </annotation>
+    
+    <sequence> 
+      <!-- EMPTY when nested in the CALDAV:supported-calendar-data property
+          to specify a supported media type for calendar object
+          resources; -->
+          
+      <!-- when nested in the DAV:prop XML element in a calendaring
+           REPORT request to specify which parts of calendar object
+           resources should be returned in the response;
+       -->
+      <choice minOccurs="0">
+        <element ref="tns:allprop" />
+        <element ref="tns:prop" maxOccurs="unbounded" />
+      </choice>
+                  
+      <element ref="cat:categories" minOccurs="0" />
+      <!-- When content-type application/xml+category requested -->
+    </sequence>
+    
+    <attribute name="content-type" type="string" default="application/xml+category" />
+    <attribute name="version" type="string" default="1.0" />
+  </complexType>
+  
+  <element name="category-data" type="tns:CategoryDataType" />
+  
+  <complexType name="TextMatchType">
+    <annotation>
+      <documentation xml:lang="en">
+        The CALDAV:text-match XML element specifies text used
+        for a substring match against the property or parameter value
+        specified in a calendaring REPORT request.
+  
+        The "collation" attribute is used to select the collation that the
+        server MUST use for character string matching.  In the absence of
+        this attribute, the server MUST use the "i;ascii-casemap"
+        collation.
+  
+        The "negate-condition" attribute is used to indicate that this
+        test returns a match if the text matches when the attribute value
+        is set to "no", or return a match if the text does not match, if
+        the attribute value is set to "yes".  For example, this can be
+        used to match components with a STATUS property not set to
+        CANCELLED.
+      </documentation>
+    </annotation>
+    <simpleContent>
+      <extension base="string">
+        <attribute name="collation" type="string" default="i;ascii-casemap" />
+        <attribute name="negate-condition" type="tns:YesNoType" default="no" />
+      </extension>
+    </simpleContent>
+  </complexType>
+  
+  <element name="text-match" type="tns:TextMatchType" />
+  
+  <complexType name="IsNotDefinedType">
+    <annotation>
+      <documentation xml:lang="en">
+        The CATDAV:is-not-defined XML element specifies that a
+        match occurs if the enclosing component, property, or parameter
+        value specified in a REPORT request does not exist in
+        the data being tested.
+      </documentation>
+    </annotation>
+  </complexType>
+  
+  <element name="is-not-defined" type="tns:IsNotDefinedType" />
+  
+  <complexType name="PropFilterType">
+    <annotation>
+      <documentation xml:lang="en">
+        The CATDAV:prop-filter XML element specifies a query
+        targeted at a specific category property (e.g., name).  A property is
+        said to match a CATDAV:prop-filter if:
+  
+        *  The CATDAV:prop-filter XML element is empty and a property of
+           the type specified by the "name" attribute exists in the
+           enclosing calendar component;
+  
+        or:
+  
+        *  The CATDAV:prop-filter XML element contains a CATDAV:is-not-
+           defined XML element and no property of the type specified by
+           the "name" attribute exists in the enclosing calendar
+           component;
+  
+        or:
+  
+        *  The CATDAV:prop-filter XML element contains a CATDAV:text-match
+           XML element and the property value matches it;
+      </documentation>
+    </annotation>
+    <sequence> 
+      <choice minOccurs="0">
+        <element ref="tns:is-not-defined" />
+        <element ref="tns:text-match" />
+      </choice>
+    </sequence>
+    <attribute name="name" type="string" use="required" />
+  </complexType>  
+  
+  <element name="prop-filter" type="tns:PropFilterType" />
+  
+  <complexType name="FilterType">
+    <annotation>
+      <documentation xml:lang="en">
+        The "filter" element specifies the search filter used
+        to match address objects that should be returned by a report.  The
+        "test" attribute specifies whether any (logical OR) or all
+        (logical AND) of the prop-filter tests needs to match in order for
+        the overall filter to match.
+      </documentation>
+    </annotation>
+    <sequence> 
+      <element ref="tns:prop-filter" maxOccurs="unbounded" />
+    </sequence>
+    
+    <attribute name="content-type" type="tns:TestAttributeType" 
+               default="anyof" />
+  </complexType>  
+  
+  <simpleType name="TestAttributeType">
+    <restriction base="string">
+      <enumeration value="anyof"/>
+      <enumeration value="allof"/>
+    </restriction>
+  </simpleType>
+  
+  <element name="filter" type="tns:FilterType" />
+  
+  <!-- 
+         <!ELEMENT calendar-query ((DAV:allprop |
+                                    DAV:propname |
+                                    DAV:prop)?, filter, timezone?, timezone-id?)>
+   -->
+
+</schema>
+

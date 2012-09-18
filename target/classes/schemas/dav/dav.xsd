@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" 
+        xmlns:DAV="DAV" 
+        targetNamespace="DAV" 
+        elementFormDefault="qualified">
+  <!-- =============================================================
+       Define DAV XML elements used by other schemas.
+       ============================================================= -->
+  
+  <simpleType name="HrefType">
+    <annotation>
+      <documentation xml:lang="en">
+ 	    There may be limits on the value of 'href' depending
+        on the context of its use.  Refer to the specification text where
+        'href' is used to see what limitations apply in each case.
+      </documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <element name="href" type="DAV:HrefType"/>
+</schema>

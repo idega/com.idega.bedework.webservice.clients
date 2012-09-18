@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+           xmlns:cat="http://www.bedework.org/schemas/category-1.0" 
+           targetNamespace="http://www.bedework.org/schemas/category-1.0" 
+           elementFormDefault="qualified">
+
+   <xs:import schemaLocation="../xml.xsd" 
+              namespace="http://www.w3.org/XML/1998/namespace" />
+
+  <xs:annotation>
+    <xs:documentation>
+      A category consists of an outer category element containing the following:
+      
+      name: the canonical name for the category
+      path: The canonical path to the category consisting of the concatenated 
+            names of the parents from the root category separated by "/"
+      lastmod: The UTC date time of last modification
+      created: The UTC date time of creation
+      deprecated: An empty element defining this as a deprecated category.
+      namespace: An empty element defining this as a namespace.
+      display-names: contains 0 or more display names. Each MUST have a different 
+            lang attribute
+      descriptions:  contains 0 or more description elements. Each MUST have a 
+            different lang attribute
+      references: contains 0 or more reference elements each of which is the  URI
+            of a potentially useful related category.
+      aliased-to: If present this is an alias for the referenced category. The
+            value is a URI.
+      categories: On retrieval may be populated with child categories.
+      
+      The root category conceptually has an empty name and is referenced by "/".
+      
+      The direct children of the root are namespace categories and define a 
+      namespace for all children of that category. The namespace category may
+      contain an aliased-to element which effectively redirects to the target which
+      may be an external category server. 
+    </xs:documentation>
+  </xs:annotation>
+  
+  <xs:complexType name="CategoryType">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="path" type="xs:string" />
+      <xs:element name="lastmod" type="cat:UTCDateTimeType" />
+      <xs:element name="created" type="cat:UTCDateTimeType" />
+      <xs:element name="deprecated" type="cat:EmptyElementType"
+                  minOccurs="0" />
+      <xs:element name="namespace" type="cat:EmptyElementType"
+                  minOccurs="0" />
+      <xs:element name="display-names" type="cat:ArrayOfDisplayNames"
+                  minOccurs="0" />
+      <xs:element name="descriptions" type="cat:ArrayOfDescriptions"
+                  minOccurs="0" />
+      <xs:element name="references" type="cat:ArrayOfReferences"
+                  minOccurs="0" />
+                  
+      <xs:choice>
+        <xs:element name="aliased-to" type="cat:UriType" />
+        <xs:element name="categories" type="cat:ArrayOfCategories"
+                    minOccurs="0" />
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="UTCDateTimeType">
+    <xs:restriction base="xs:dateTime">
+      <xs:pattern value="(\-|\+)?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d*)Z"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="EmptyElementType">
+  </xs:complexType>  
+  
+  <xs:complexType name="ArrayOfDisplayNames">
+    <xs:sequence>
+      <xs:element name="display-name" type="cat:LocalizedStringType" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>  
+  
+  <xs:complexType name="ArrayOfDescriptions">
+    <xs:sequence>
+      <xs:element name="description" type="cat:LocalizedStringType" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>  
+  
+  <xs:complexType name="ArrayOfReferences">
+    <xs:sequence>
+      <xs:element name="reference" type="cat:UriType" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>  
+  
+  <xs:complexType name="ArrayOfCategories">
+    <xs:sequence>
+      <xs:element name="category" type="cat:CategoryType" 
+                  minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>  
+
+  <xs:element name="categories" type="cat:ArrayOfCategories" />
+  
+  <xs:complexType name="LocalizedStringType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:lang" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  
+  <xs:simpleType name="UriType">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+</xs:schema>
