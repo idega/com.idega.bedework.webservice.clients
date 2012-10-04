@@ -228,7 +228,7 @@
 
   <wsdl:service name="CalWsService">
     <wsdl:port name="CalWsPort" binding="tns:CalWsServiceBinding">
-       <soap:address location="http://localhost:8080/ucaldav/calws-soap/"></soap:address>
+       <soap:address location="http://127.0.0.1:8080/ucaldav/calws-soap/"></soap:address>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>  

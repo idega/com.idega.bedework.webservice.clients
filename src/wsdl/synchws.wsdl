@@ -352,7 +352,7 @@
   <wsdl:service name="SynchRemoteService">
     <wsdl:port name="SynchRSPort" binding="tns:SynchRemoteServiceBinding">
        <!-- <soap:address location="http://localhost:8080/localBedework/"></soap:address> -->
-       <soap:address location="http://localhost:8080/pubcaldav/synchws/"></soap:address>
+       <soap:address location="http://127.0.0.1:8080/pubcaldav/synchws/"></soap:address>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>  

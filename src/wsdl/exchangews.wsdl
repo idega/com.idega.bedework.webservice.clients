@@ -1513,7 +1513,7 @@
 
   <wsdl:service name="ExchangeWebService">
     <wsdl:port name="ExchangeWebPort" binding="tns:ExchangeServiceBinding">
-       <soap:address location="https://localhost:8080/EWS/exchange.asmx"></soap:address>
+       <soap:address location="https://127.0.0.1:8080/EWS/exchange.asmx"></soap:address>
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
