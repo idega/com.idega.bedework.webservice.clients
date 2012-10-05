@@ -158,6 +158,9 @@ public class WSDLConfigurationServlet extends HttpServlet {
 		do {
 			aByte = is.read();
 			out.write(aByte);
+			if (aByte == 255) {
+				System.out.println("255 found");
+			}
 		} while (aByte >= 0);
 		
 		is.close();
